@@ -8,7 +8,7 @@ app.use(express.json())
 app.use('/api/notes',require('./routes/notes'))
 
 
-mongoose.connect('mongodb://127.0.0.1:27017/notes-app').then(()=>{
+mongoose.connect('mongodb+srv://qadir:qadir@edify.0i5koc5.mongodb.net/?retryWrites=true&w=majority').then(()=>{
     console.log("Connected!")
 })
 
