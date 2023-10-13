@@ -1,22 +1,25 @@
-import React, { useState,useEffect } from "react";
+import React, { useState,useEffect,useRef } from "react";
 
 const Home = () => {
 
 
   var [notes, setNotes] = useState([]);
+  var [loadAgain,setLoadAgain] = useState(false)
+
+  var titleInputTag = useRef()
+
+
+
   const fetchNotes = async () =>{
-    var res = await fetch('http://localhost:5000/api/notes')
+    var res = await fetch('https://notes-app-one-flax.vercel.app/api/notes')
     res = await res.json()
 
     setNotes(res.message)
   }
   
-
   useEffect(()=>{
     fetchNotes()
-  },[notes])
-
-
+  },[loadAgain])
 
 
   var [title,setTitle] = useState('')
@@ -25,7 +28,7 @@ const Home = () => {
 
   const submitHandler =async (e) =>{
     e.preventDefault()
-    var res = await fetch('http://localhost:5000/api/notes',{
+    var res = await fetch('https://notes-app-one-flax.vercel.app/api/notes',{
       method:"POST",
       headers:{
         "content-type":"application/json"
@@ -38,6 +41,7 @@ const Home = () => {
     if(res.success){
       setDesc("")
       setTitle("")
+      setLoadAgain(!loadAgain)
     }else{
       alert(res.message)
     }
@@ -46,14 +50,63 @@ const Home = () => {
   }
 
 
+  async function deleteNotes(id){
+    var res = await fetch(`https://notes-app-one-flax.vercel.app/api/notes/${id}`,{
+      method:"DELETE"
+    })
+    var jsonRes = await res.json()
+
+    if(jsonRes.success){
+      setLoadAgain(!loadAgain)
+    }
+  }
+
+
+  // For Updation
+
+  var [updateMode,setUpdateMode] = useState(false)
+  var [notesID,setNotesID] = useState('')
+  function setDataInForm(data){
+    setTitle(data.title)
+    setDesc(data.desc)
+    titleInputTag.current.focus()
+    setUpdateMode(true)
+    setNotesID(data._id)
+  }
+
+  async function updateNotes(e){
+    e.preventDefault()
+    var res = await fetch(`https://notes-app-one-flax.vercel.app/api/notes/${notesID}`,{
+      method:"PUT",
+      headers:{
+        "content-type":"application/json"
+      },
+      body:JSON.stringify({title,desc})
+    })
+    var jsonRes = await res.json()
+    
+    if(jsonRes.success){
+      setDesc("")
+      setTitle("")
+      setLoadAgain(!loadAgain)
+      setUpdateMode(false)
+      setNotesID("")
+    }else{
+      alert(res.message)
+    }
+
+  }
+
+
   return (
     <div className="max-w-3xl mx-auto">
-      <form onSubmit={submitHandler} className="border-[1px] border-slate-200 my-10 p-4">
+      <form onSubmit={updateMode ? updateNotes : submitHandler} className="border-[1px] border-slate-200 my-10 p-4">
         <h2 className="text-2xl font-semibold mb-4">
-          Add <span className="text-blue-600">Notes</span>
+        {updateMode ? "Update":"Add"} <span className="text-blue-600">Notes</span>
         </h2>
 
         <input
+          ref={titleInputTag}
           className="block focus:outline-blue-600 w-full border-[1px] p-2 rounded-sm mb-2 border-slate-300"
           type="text"
           placeholder="Title"
@@ -70,7 +123,7 @@ const Home = () => {
         />
 
         <button className="py-1 px-2 bg-blue-600 rounded-sm text-white">
-          Submit
+          {updateMode ? "Update":"Submit"}
         </button>
       </form>
 
@@ -83,9 +136,13 @@ const Home = () => {
               {v.desc}
               </p>
 
+              <p className="text-xs my-4">
+              {new Date(v.createdAt).toDateString()}
+              </p>
+
               <div className="flex justify-end">
-                <i className="bx bx-edit text-blue-600"></i>
-                <i className="bx bx-trash text-red-700"></i>
+                <i title="Edit" onClick={()=>setDataInForm(v)}  className="bx bx-edit text-blue-600 text-xl p-1 cursor-pointer"></i>
+                <i title="Delete" onClick={()=>window.confirm("Are you sure to delete this Note") && deleteNotes(v._id)} className="bx bx-trash text-red-700 text-xl p-1 cursor-pointer"></i>
               </div>
             </div>
           );
