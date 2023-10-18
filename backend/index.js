@@ -3,7 +3,10 @@ const app = express()
 const mongoose = require('mongoose')
 const cors = require("cors")
 
-app.use(cors())
+app.use(cors({
+    credentials:true,
+    origin:"https://notes-app-lq8b.vercel.app/"
+}))
 app.use(express.json())
 app.use('/api/notes',require('./routes/notes'))
 app.use('/api/auth',require('./routes/users'))
