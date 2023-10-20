@@ -5,7 +5,7 @@ const cors = require("cors")
 
 app.use(cors({
     credentials:true,
-    origin:"https://notes-app-lq8b.vercel.app/"
+    // origin:"https://notes-app-lq8b.vercel.app/"
 }))
 app.use(express.json())
 app.use('/api/notes',require('./routes/notes'))

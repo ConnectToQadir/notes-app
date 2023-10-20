@@ -12,6 +12,7 @@ const Home = () => {
 
   const fetchNotes = async () =>{
     var res = await fetch('https://notes-app-one-flax.vercel.app/api/notes')
+    // var res = await fetch('http://localhost:5000/api/notes')
     res = await res.json()
 
     setNotes(res.message)
