@@ -1,6 +1,9 @@
-import React, { useState,useEffect,useRef } from "react";
+import React, { useState,useEffect,useRef,useContext } from "react";
+import { GlobalData } from '../Context'
 
 const Home = () => {
+
+  var data = useContext(GlobalData)
 
 
   var [notes, setNotes] = useState([]);
@@ -11,8 +14,7 @@ const Home = () => {
 
 
   const fetchNotes = async () =>{
-    var res = await fetch('https://notes-app-one-flax.vercel.app/api/notes')
-    // var res = await fetch('http://localhost:5000/api/notes')
+    var res = await fetch('http://localhost:5000/api/notes')
     res = await res.json()
 
     setNotes(res.message)
@@ -127,6 +129,9 @@ const Home = () => {
           {updateMode ? "Update":"Submit"}
         </button>
       </form>
+
+
+      {/* <button onClick={()=>data.setUser({name:"Null"})} className="border">Logout</button> */}
 
       <div>
         {notes.map((v,i) => {

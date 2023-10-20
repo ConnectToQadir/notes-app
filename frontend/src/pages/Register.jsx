@@ -32,7 +32,7 @@ const Register = () => {
   const Register =async (e) =>{
     e.preventDefault()
     try {
-      var res = await axios.post('https://notes-app-one-flax.vercel.app/api/auth/register',data)
+      var res = await axios.post('http://localhost:5000/api/auth/register',data)
       if(res.data.success){
         toast.success("Your are Registered!")
         setTimeout(()=>{

@@ -28,7 +28,7 @@ const Login = () => {
   const Login =async (e) =>{
     e.preventDefault()
     try {
-      var res = await axios.post('https://notes-app-one-flax.vercel.app/api/auth/login',data,{withCredentials:true})
+      var res = await axios.post('http://localhost:5000/api/auth/login',data,{withCredentials:true})
       if(res.data.success){
         toast.success(res.data.message)
         setTimeout(()=>{

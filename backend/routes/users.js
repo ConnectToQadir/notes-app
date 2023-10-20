@@ -117,7 +117,7 @@ router.post("/login", async (req, res) => {
         }
 
         // Gererate Access Token and save it in response cookies
-        var token = jwt.sign({id:foundUser._id},"asdkjf*&%*%*4848",{expiresIn:"15s"})
+        var token = jwt.sign({id:foundUser._id},"asdkjf*&%*%*4848",{expiresIn:"2m"})
         res.cookie("accessToken",token,{secure:true,httpOnly:true})
 
         // Send Success Message
@@ -138,6 +138,45 @@ router.post("/login", async (req, res) => {
 })
 
 
+router.get("/user-info",async (req,res)=>{
+    try {
+
+        if(!req.cookies.accessToken){
+            res.status(403).json({
+                success:false,
+                message:"Access Token Not Found!"
+            })
+            return
+        }
+
+
+        try {
+            var paylaod = jwt.verify(req.cookies.accessToken,"asdkjf*&%*%*4848")
+            var user = await UserModel.findById(paylaod.id,{password:false})
+            res.json({
+                success:true,
+                message:user
+            })
+            return
+            
+        } catch (error) {
+            res.status(403).json({
+                success:false,
+                message:"Invalid Access Token!"
+            })
+            return
+        }
+
+
+        res.send("hi")
+    } catch (error) {
+
+        console.log(error)
+
+        res.send("error")
+        
+    }
+})
 
 
 
